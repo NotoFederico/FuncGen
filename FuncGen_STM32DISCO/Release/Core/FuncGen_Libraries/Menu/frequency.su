@@ -1,0 +1,5 @@
+frequency.cpp:77:1:void __static_initialization_and_destruction_0(int, int)	16	static
+frequency.cpp:53:6:void print_freqvalues(flags*)	16	static
+frequency.cpp:10:11:uint16_t* frequency_menu(uint16_t*, options*, flags*)	40	static
+frequency.cpp:77:1:cpp)	8	static
+frequency.cpp:77:1:cpp)	8	static

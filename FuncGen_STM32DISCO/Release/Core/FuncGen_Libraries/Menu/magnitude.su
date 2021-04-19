@@ -1,0 +1,16 @@
+magnitude.cpp:29:1:magnitude::~magnitude()	8	static
+magnitude.cpp:29:1:virtual magnitude::~magnitude()	8	static
+magnitude.cpp:159:1:void __static_initialization_and_destruction_0(int, int)	16	static
+magnitude.cpp:124:5:int magnitude::array_to_integer()	4	static
+magnitude.cpp:134:5:int magnitude::count_digit(int)	8	static
+magnitude.cpp:139:6:void magnitude::vector_fill(int, int, int)	12	static
+stl_algo.h:1152:5:void std::__reverse(_RandomAccessIterator, _RandomAccessIterator, std::random_access_iterator_tag) [with _RandomAccessIterator = __gnu_cxx::__normal_iterator<int*, std::vector<int> >]	0	static
+magnitude.cpp:34:5:int magnitude::refresh(int, int, int, int)	40	static
+vector.tcc:364:7:void std::vector<_Tp, _Alloc>::_M_insert_aux(std::vector<_Tp, _Alloc>::iterator, _Arg&&) [with _Arg = int; _Tp = int; _Alloc = std::allocator<int>]	16	static
+stl_iterator.h:1241:5:base())) std::__miter_base(std::move_iterator<_IteratorL>) [with _Iterator = int*]	0	static
+vector.tcc:394:7:) [with _Args = {int}; _Tp = int; _Alloc = std::allocator<int>]	40	static
+vector.tcc:313:5:std::vector<_Tp, _Alloc>::iterator std::vector<_Tp, _Alloc>::_M_insert_rval(std::vector<_Tp, _Alloc>::const_iterator, std::vector<_Tp, _Alloc>::value_type&&) [with _Tp = int; _Alloc = std::allocator<int>]	16	static
+magnitude.cpp:110:13:std::vector<int> magnitude::integer_to_array(int)	24	static
+magnitude.cpp:18:1:magnitude::magnitude(int, int)	32	static
+magnitude.cpp:159:1:cpp)	8	static
+magnitude.cpp:159:1:cpp)	8	static

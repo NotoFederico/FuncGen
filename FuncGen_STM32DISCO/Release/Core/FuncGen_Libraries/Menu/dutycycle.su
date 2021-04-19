@@ -1,0 +1,10 @@
+dutycycle.cpp:228:1:void __static_initialization_and_destruction_0(int, int)	16	static
+dutycycle.cpp:72:6:void print_magnitude(double*, int)	24	static
+dutycycle.cpp:98:6:void print_hltimes(wave_param*, flags*)	64	static
+dutycycle.cpp:52:6:void print_dutyvalues(flags*)	16	static
+dutycycle.cpp:118:6:void print_freqvalue(wave_param*)	24	static
+dutycycle.cpp:15:6:void dutycycle_menu(flags*)	40	static
+dutycycle.cpp:128:6:void reverse(char*, int)	4	static
+dutycycle.cpp:181:6:void timer2_init()	64	static
+dutycycle.cpp:228:1:cpp)	8	static
+dutycycle.cpp:228:1:cpp)	8	static

@@ -1,0 +1,67 @@
+#include "step.h"
+
+void step(void)
+	{
+	TIM1->ARR = 7; // la flecha puede recorrer dos posiciones = 2*4 -1
+	TIM8->ARR = 7;
+	cls_lcd();
+	print_stepmenu();
+	int old = -1;
+	int current = 0;
+		
+	while(1)
+		{
+		if(old!=TIM8->CNT)
+		{
+		old = TIM8->CNT;
+		manualmode_sel();
+		}
+		}
+	}
+
+void print_stepmenu(void)
+	{
+	print_shifted("STEP", 1, 1);
+	print_shifted("Manual Mode", 2, 1);
+	print_shifted("Ext. Trigger", 4, 1);
+	print_shifted("Off", 2, 16);
+	print_shifted("On", 3, 16);
+	}
+
+void stepmenu_sel(void)
+	{
+	if(TIM1->CNT == 0)
+	{
+	Print_ArrowRight( 2, 0);
+	}
+	else
+		if(TIM1->CNT == 4)
+		{
+				Print_ArrowRight( 4, 0);
+		}
+		else
+		{
+			TIM1->CNT = 0;
+		}
+	}
+	
+
+void manualmode_sel(void)
+	{
+	if(TIM1->CNT == 0)
+		{
+			if(TIM1->CNT == 0)
+	{
+	Print_ArrowRight( 2, 15);
+	}
+	else
+		if(TIM8->CNT == 4)
+		{
+				Print_ArrowRight( 3, 15);
+		}
+		else
+		{
+			TIM8->CNT = 0;
+		}
+		}
+	}

@@ -1,0 +1,45 @@
+#include "main_screen.h"
+#include "waveforms.h"
+#include "dutycycle.h"
+#include "frequency.h"
+
+char buffer[10];
+void Main_Screen()
+{
+
+	Print_Labels();
+	Print_Params();
+}
+
+void Print_Labels(void)
+{
+	print_shifted("WAVE:",1,0);
+	print_shifted("FREQ:",2,0);
+	print_shifted("Hz",2,12);
+	print_shifted("AMP:",3,0);
+	print_shifted("V",3,8);
+	print_shifted("OFST:",4,0);
+	print_shifted("V",4,8);
+	print_shifted("DUT:",4,11);
+	print_shifted("%",4,18);	
+}
+void Print_Params(void)
+{
+	snprintf(buffer, sizeof(buffer), "%d", param.frequency);
+	print_shifted(buffer,2,7);
+	snprintf(buffer, sizeof(buffer), "%d", (int) param.duty_cycle);
+	print_shifted(buffer,4,16);
+	Get_WaveformName();
+}
+
+void Get_WaveformName(void)
+{
+char* waveforms_array[7] = {"SINE     ", "HAVSINE ", "SQUARE   ", "RECTANGULAR", "TRIANGULAR", "SAWTOOTH", "W.NOISE "};
+int waveform_selected = Get_WaveformLoaded();
+if(waveform_selected>6||waveform_selected<0)
+{	
+print_shifted("NONE",1,7);
+}
+else
+print_shifted(waveforms_array[waveform_selected],1,7);
+}

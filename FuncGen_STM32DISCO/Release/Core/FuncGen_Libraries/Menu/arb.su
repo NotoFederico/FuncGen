@@ -1,0 +1,6 @@
+arb.cpp:129:13:void Flush_Buffer(uint8_t*, uint16_t)	0	static
+arb.cpp:116:6:void load_percentage(uint16_t, uint16_t)	8	static
+arb.cpp:139:6:void HAL_I2C_SlaveRxCpltCallback(I2C_HandleTypeDef*)	0	static
+arb.cpp:149:6:void HAL_I2C_ErrorCallback(I2C_HandleTypeDef*)	24	static
+arb.cpp:159:6:void params_parser(char*, uint32_t*, uint32_t*)	40	static
+arb.cpp:24:11:uint16_t* arbwave_menu(uint16_t*)	32	static

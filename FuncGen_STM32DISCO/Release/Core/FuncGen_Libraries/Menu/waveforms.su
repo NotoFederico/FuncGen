@@ -1,0 +1,4 @@
+waveforms.cpp:113:6:void waveforms_circularmenu()	16	static
+waveforms.cpp:194:6:void recover_view(flags*)	16	static
+waveforms.cpp:13:11:uint16_t* waveforms_menu(uint16_t*, options*, flags*)	24	static
+waveforms.cpp:222:5:int get_waveformloaded()	0	static

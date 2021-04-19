@@ -1,0 +1,16 @@
+lcd.cpp:138:6:void lcd_wr_data4bits(char)	0	static
+lcd.cpp:143:6:void lcd_wr(char)	0	static
+lcd.cpp:149:6:void lcd_wr_instr4bits(char)	0	static
+lcd.cpp:17:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	8	static
+lcd.cpp:169:6:void init_lcd()	0	static
+lcd.cpp:174:6:void cls_lcd()	8	static
+lcd.cpp:179:6:void posic_lcd(char)	0	static
+lcd.cpp:185:6:void wrchar(unsigned char)	8	static
+lcd.cpp:190:6:void print(char*)	16	static
+lcd.cpp:202:6:void cursor_normal()	8	static
+lcd.cpp:207:6:void cursor_titilante()	8	static
+lcd.cpp:212:6:void print_int_dec(unsigned int)	24	static
+lcd.cpp:236:6:void print_hex(unsigned char)	8	static
+lcd.cpp:264:6:void print_int_hex(unsigned int)	8	static
+lcd.cpp:270:6:void print_shifted(char*, int, int)	8	static
+lcd.cpp:293:6:void clean_line(int)	8	static

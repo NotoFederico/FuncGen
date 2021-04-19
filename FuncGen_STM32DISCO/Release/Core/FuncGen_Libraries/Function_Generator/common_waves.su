@@ -1,0 +1,9 @@
+common_waves.cpp:18:6:void Load_Square(wave_param*)	0	static
+common_waves.cpp:25:6:void Load_Rectangular(wave_param*)	0	static
+common_waves.cpp:32:6:void Load_Step(int)	0	static
+common_waves.cpp:46:11:uint16_t* Load_Sine(uint16_t*, wave_param*)	40	static
+common_waves.cpp:67:11:uint16_t* Load_Hav(uint16_t*, wave_param*)	40	static
+common_waves.cpp:87:11:uint16_t* Load_Triangular(uint16_t*, wave_param*)	48	static
+common_waves.cpp:112:11:uint16_t* Load_Sawtooth(uint16_t*, wave_param*)	40	static
+common_waves.cpp:134:11:uint16_t* Load_White(uint16_t*, wave_param*)	40	static
+common_waves.cpp:151:6:void SampleRate_Algorithm(wave_param*)	64	static

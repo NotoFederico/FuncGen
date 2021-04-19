@@ -1,0 +1,2 @@
+2020-10-15 11:05:27.567 [main] INFO  eu.mihosoft.freerouting.FreeRouting - Freerouting application is started.
+2020-10-15 11:05:27.803 [main] TRACE eu.mihosoft.freerouting.FreeRouting - Method 'MainApplication.main()' was performed in 0.31 seconds.

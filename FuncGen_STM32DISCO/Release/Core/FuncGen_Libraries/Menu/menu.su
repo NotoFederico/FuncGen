@@ -1,0 +1,4 @@
+menu.cpp:53:5:int selector(options*)	0	static
+menu.cpp:17:11:uint16_t* menu(uint16_t*)	16	static
+menu.cpp:156:6:void print_arrowup(int, int)	16	static
+menu.cpp:166:6:void print_arrowright(int, int)	16	static

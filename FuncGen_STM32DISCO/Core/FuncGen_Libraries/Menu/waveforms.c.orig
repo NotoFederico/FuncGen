@@ -1,0 +1,286 @@
+#include "waveforms.h"
+#include "dutycycle.h"
+char* waveforms_array[9] = {"SINE     ", "HAVSINE ", "SQUARE   ", "RECT.  ", "TRIANG. ", "SAWTOOTH", "W.NOISE   ", "STEP    ", "ARB.WAVE"};
+int initial_waveform = 0, initial_waveform_old = -1, row_selected = 1, row_selected_old = -1;
+int waveform_selected = 0, waveform_loaded = -1, shift_flag = 0;
+int arbwave_screen = 0, duty_screen = 0, step_screen = 0;
+
+uint16_t* Waveforms_Menu(uint16_t* dac_samples_buffer2, struct options* option, struct flags* flag)
+	{
+	if(option->current == WAVEFORMS)
+		{
+		RecoverView(flag);
+		Waveforms_CircularMenu(); // Obtiene el valor de la forma de onda que corresponde de acuerdo a la posición del encoder
+		}
+
+	switch(waveform_selected)
+		{
+		case SQUARE:
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				if(flag->reloadwave == 1)
+					{
+					Timer2_Init();
+					}
+
+				waveform_loaded = SQUARE;
+				Load_Square(&param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case RECTANGULAR :
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				duty_screen = 1;
+
+				if(flag->reloadwave == 1)
+					{
+					Timer2_Init();
+					}
+
+				Load_Rectangular(&param);
+				waveform_loaded = RECTANGULAR;
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case SINE :
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				waveform_loaded = SINE;
+				SampleRate_Algorithm(&param);
+				dac_samples_buffer2 = Load_Sine(dac_samples_buffer2, &param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case HAV :
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				waveform_loaded = HAV;
+				SampleRate_Algorithm(&param);
+				Load_Hav(dac_samples_buffer2, &param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case TRIANGULAR :
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				waveform_loaded = TRIANGULAR;
+				SampleRate_Algorithm(&param);
+				Load_Triangular(dac_samples_buffer2, &param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case SAWTOOTH :
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				waveform_loaded = SAWTOOTH;
+				SampleRate_Algorithm(&param);
+				Load_Sawtooth(dac_samples_buffer2, &param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case WHITE:
+			if(waveform_selected != waveform_loaded || flag->reloadwave == 1)
+				{
+				waveform_loaded = WHITE;
+				SampleRate_Algorithm(&param);
+				Load_White(dac_samples_buffer2, &param);
+				flag->reloadwave = 0;
+				}
+
+			break;
+
+		case STEP:
+			waveform_loaded = STEP;
+			step_screen = 1;
+			break;
+
+		case ARBITRARY:
+			waveform_loaded = ARBITRARY;
+			arbwave_screen = 1;
+			break;
+		}
+
+	if(waveform_selected != RECTANGULAR)
+		{
+		duty_screen = 0;
+		}
+
+	else
+		if(	waveform_selected != ARBITRARY)
+			{
+			arbwave_screen  = 0;
+			}
+else
+			if(	waveform_selected != STEP_WAVE)
+			{
+			step_screen  = 0;
+			}
+	return dac_samples_buffer2;
+	}
+
+
+void Waveforms_CircularMenu(void)
+	{
+	volatile int i = 0;
+	volatile int aux = 0;
+	TIM1->ARR = 15; // la flecha tiene 4 lineas para recorrer (4*4-1)
+	row_selected = (TIM1->CNT >> 2) + 1;
+
+//Bloque 1
+	if(row_selected == 4 && row_selected_old == 1)
+		{
+		TIM1->CNT = (row_selected_old << 2) - 1;
+		shift_flag = -1;
+
+		if(--waveform_selected < SINE)
+			{
+			waveform_selected = ARBITRARY;
+			}
+		}
+
+	else
+		if(row_selected == 1 && row_selected_old == 4)
+			{
+			TIM1->CNT = (row_selected_old << 2) - 1;
+			shift_flag = 1;
+
+			if(++waveform_selected > ARBITRARY)
+				{
+				waveform_selected = SINE;
+				}
+			}
+
+// Fin de Bloque 1
+
+// Bloque 2
+
+	if(shift_flag != 0)
+		{
+		initial_waveform += shift_flag;
+		shift_flag = 0;
+
+		if(initial_waveform > ARBITRARY)
+			{
+			initial_waveform = SINE;
+			}
+
+		if(initial_waveform < SINE)
+			{
+			initial_waveform = ARBITRARY;
+			}
+
+		row_selected = row_selected_old;
+		}
+
+// Fin de Bloque 2
+
+//Bloque 3
+	if(initial_waveform != initial_waveform_old)
+		{
+		int aux = 0;
+
+		for(i = 1; i <= 4 ; i++ )
+			{
+			if (initial_waveform == TRIANGULAR || initial_waveform == SAWTOOTH || initial_waveform == WHITE || initial_waveform == STEP || initial_waveform == ARBITRARY)
+				{
+				if((initial_waveform + i - 1) == 9 || (initial_waveform + i - 1) == 10 || (initial_waveform + i - 1) == 11)
+					{
+					aux = -9;
+					}
+
+				else
+					{
+					aux = 0;
+					}
+				}
+
+			print_shifted(waveforms_array[initial_waveform + i - 1 + aux], i, 12);
+			}
+
+		initial_waveform_old = initial_waveform;
+		}
+
+//Fin de Bloque 3
+
+//Bloque 4
+	if(row_selected != row_selected_old)
+		{
+		row_selected_old = row_selected;
+		Print_ArrowRight(row_selected, 11);
+		}
+
+//Fin de Bloque 4
+
+//Bloque 5
+	if (initial_waveform == TRIANGULAR || initial_waveform == SAWTOOTH || initial_waveform == WHITE || initial_waveform == STEP || initial_waveform == ARBITRARY)
+		{
+		if((initial_waveform + row_selected - 1) == 9 || (initial_waveform + row_selected - 1) == 10 || (initial_waveform + row_selected - 1) == 11)
+			{
+			aux = -9;
+			}
+
+		else
+			{
+			aux = 0;
+			}
+		}
+
+	waveform_selected = initial_waveform + row_selected - 1 + aux;
+	aux = 0;
+//Fin de bloque 5
+	char buff[3];
+	sprintf(buff, "%d", waveform_selected);
+	print_shifted(buff, 4, 0);
+	}
+
+void RecoverView(struct flags* flag)
+	{
+	int i;
+	int aux = 0;
+
+	if(flag->recoverview == 1)
+		{
+		flag->recoverview = 0;
+		flag->reloadwave = 1;
+
+		for(i = 1; i <= 4 ; i++ )
+			{
+			if (initial_waveform == TRIANGULAR || initial_waveform == SAWTOOTH || initial_waveform == WHITE || initial_waveform == STEP || initial_waveform == ARBITRARY)
+				{
+				if((initial_waveform + i - 1) == 9 || (initial_waveform + i - 1) == 10 || (initial_waveform + i - 1) == 11)
+					{
+					aux = -9;
+					}
+
+				else
+					{
+					aux = 0;
+					}
+				}
+
+			print_shifted(waveforms_array[initial_waveform + i - 1 + aux], i, 12);
+			}
+
+		Print_ArrowRight(row_selected, 11);
+		TIM1->CNT = (row_selected << 2) - 1;
+		}
+	}
+
+int Get_WaveformLoaded(void)
+	{
+	int cw = waveform_selected;
+	return cw;
+	}

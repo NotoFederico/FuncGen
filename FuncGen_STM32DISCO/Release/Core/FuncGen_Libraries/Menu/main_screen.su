@@ -1,0 +1,8 @@
+main_screen.cpp:37:6:void print_labels()	8	static
+main_screen.cpp:91:6:void get_waveform_name()	48	static
+main_screen.cpp:49:6:void print_params()	24	static
+main_screen.cpp:184:6:void sort_tab(uint16_t*, uint16_t)	16	static
+main_screen.cpp:145:10:uint16_t adc_getsampleavg_n_delete_x(ADC_HandleTypeDef, int, uint16_t, uint16_t)	24	static
+main_screen.cpp:104:6:void print_amplitude()	104	static
+main_screen.cpp:122:6:void print_offset()	104	static
+main_screen.cpp:17:6:void main_screen(flags*)	8	static

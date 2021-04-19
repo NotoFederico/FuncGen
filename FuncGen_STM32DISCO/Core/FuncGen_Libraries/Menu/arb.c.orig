@@ -1,0 +1,138 @@
+#include "arb.h"
+
+extern I2C_HandleTypeDef hi2c1;
+extern DAC_HandleTypeDef hdac;
+extern const double timer_f_clock;
+extern struct options option;
+extern int8_t flag_callback_menu;
+uint16_t* ArbWave_Menu(uint16_t* dac_samples_buffer3)
+	{
+	uint8_t buffer[2] = {0};
+	int pos = 0;
+	char* arr;
+	uint16_t* parsed_array;
+	arr =	 malloc(sizeof(char));
+	print_shifted("Send arbitrary wave", 2, 0);
+	print_shifted("http://esp8266.local", 3, 0);
+	do
+		{
+			HAL_I2C_Slave_Receive(&hi2c1, (uint8_t*) buffer, 2, 1000);
+			HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_13);
+
+			if(buffer[0] != NULL)
+				{
+				arr[pos++] = buffer[0];
+				buffer[0] = NULL;
+				}				
+			
+		} while(arr[pos - 1] != 'X' && flag_callback_menu!=1); 
+
+		if(option.current != ARB_WAVE)
+		{
+			return dac_samples_buffer3;
+		}
+	
+	uint32_t size = Param_Finder(arr, "Length:,"); //determino el tamaño del array
+	uint32_t sample_rate = Param_Finder(arr, 	"Sample Rate:,");
+	parsed_array = Parser(arr, dac_samples_buffer3);
+	free(arr);
+
+	if(parsed_array != NULL)
+		{ print_shifted("Transfer complete", 4, 0); }
+
+	else
+		{ print_shifted("Transfer failed", 4, 0); }
+
+	TIM6->ARR	= (uint32_t) (timer_f_clock / sample_rate - 1);
+	HAL_DAC_Stop_DMA(&hdac, DAC_CHANNEL_1);
+	HAL_DAC_Start_DMA(&hdac, DAC_CHANNEL_1, (uint32_t*)parsed_array, size, DAC_ALIGN_12B_R);
+	return	parsed_array;
+	}
+
+uint16_t* Parser(char* raw_array, uint16_t* dac_samples_buffer3)
+	{
+	char* p;
+	char sample[10];
+	int arbwave_dac_samples_size;
+	int i, j, k;
+		
+	p = strstr(raw_array, "Sample Rate:,"); //Obtengo el puntero a la S de "Sample Rate;,"
+
+	if(p == NULL)
+		{
+		return 0;
+		}
+
+	else
+		{
+		p += strlen("Sample Rate:,"); //Obtengo el puntero a la , de "Sample Rate;,"
+		}
+
+	do
+		{
+		++p;
+		} while(*p != ',' && flag_callback_menu!=1); //Salgo cuando encuentro otra "," justo antes del comienzo de la primera muestra
+
+	arbwave_dac_samples_size = Param_Finder(raw_array, "Length:,"); //determino el tamaño del array
+
+	if(dac_samples_buffer3 != NULL)
+		{
+		free(dac_samples_buffer3);
+		}
+
+	dac_samples_buffer3 =	(uint16_t*) malloc(arbwave_dac_samples_size * sizeof(uint16_t)); //le asigno memoria en la heap
+
+	for(i = 0; i < arbwave_dac_samples_size; i++) // voy a iterar segun la cantidad de muestras que tenga
+		{
+		++p; // incremento la dirección del puntero al caracter ","  y lo posiciono en el primer digito que puede ser un signo o un numero
+		k = 0;
+
+		while(*p != ',' && flag_callback_menu!=1) //itero hasta que me encuentre con otra ","
+			{
+			sample[k++] = *(p++); //guardo todos los digitos entre los dos tokens en este array auxiliar
+			//printf("Vector sample, dato %c en la pos %d\n", sample[k-1], k-1);
+			}
+
+		if(strlen(sample) != NULL)
+			{
+			dac_samples_buffer3[i] = (atoi(sample) + 2048) * 0.95; //convierto el array en un numero y lo guardo mientras no sea nulo el tamaño del array
+			}
+
+		for(j = 0; j < 10; j++)
+			{
+			sample[j] = NULL;	// limpio el array auxiliar
+			}
+
+		while((*p == '\n' || *p == '\r') && flag_callback_menu!=1) //si me encuentro con saltos de linea o retorno de carro incremento el puntero
+			{
+			++p;
+			}
+		}
+
+	return dac_samples_buffer3;
+	}
+
+uint32_t Param_Finder(char* payload, char* string)
+	{
+	char* dir;
+	char param_buffer[10] = {0};
+	int i = 0, string_size = 0, result = 0;
+	string_size = strlen(string);
+	dir = strstr(payload, string);
+
+	if(dir == NULL)
+		{ return 0; }
+
+	else
+		{
+		while(*(dir + string_size + i) != ',')
+			{
+			param_buffer[i] = *(dir + i + string_size);
+			i++;
+			}
+
+		result = atoi(param_buffer);
+		}
+
+	return result;
+	}

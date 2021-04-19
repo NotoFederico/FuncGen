@@ -1,0 +1,366 @@
+#include "menu.h"
+#include "push_buttons.h"
+#include "main_screen.h"
+#include "waveforms.h"
+#include "arb.h"
+#include "frequency.h"
+#include "dutycycle.h"
+#include "amplitude.h"
+#include "offset.h"
+#include "step.h"
+
+struct options option = {1, 1};
+struct flags flag = {0, 0};
+struct symbol sym = {{126, '\0'}, {25, '\0'}, {179, '\0'}};
+extern int arbwave_screen;
+extern int duty_screen;
+
+
+void Welcome(void)
+	{
+	init_lcd();
+	cls_lcd();
+	print_shifted("DIGITALES III", 1, 3);
+	print_shifted("Generador", 2, 5);
+	print_shifted("de", 3, 8);
+	print_shifted("Funciones", 4, 5);
+	HAL_Delay(100); //3000
+	cls_lcd();
+	}
+
+uint16_t* Menu(uint16_t* dac_samples_buffer1, struct selection* dut, struct selection* freq, struct selection* amp, struct selection* ofs)
+	{
+	if((option.current = Selector(&option, &flag)) != option.old)
+		{
+		cls_lcd();
+		option.old = option.current;
+		flag.recoverview = 1;
+		}
+
+// la selección deberia de hacerse con los botones arriba y abajo
+
+	switch(option.current)
+		{
+		case MAIN:
+			Main_Screen();
+			break;
+
+		case WAVEFORMS:
+			print_shifted("WAVEFORMS  ", 1, 0);
+			dac_samples_buffer1 = Waveforms_Menu(dac_samples_buffer1, &option, &flag);
+			break;
+
+		case FREQUENCY:
+			print1("FREQUENCY  ");
+			dac_samples_buffer1 = Frequency_Menu(dac_samples_buffer1, freq, &option, &flag);
+			break;
+
+		case DUTY_CYCLE:
+			print_shifted("DUTY CYCLE  ", 1, 0);
+			DutyCycle_Menu(dut, &flag);
+			break;
+
+		case ARB_WAVE:
+			print_shifted("ARB. WAVE", 1, 0);
+			dac_samples_buffer1 = ArbWave_Menu(dac_samples_buffer1);
+			break;
+		
+		case STEP:
+			step();
+		break;
+			
+		default:
+			break;
+		}
+
+	return dac_samples_buffer1;
+	}
+
+int Selector(struct options* option, struct flags* flag)
+	{
+	if(flag_callback_menu == 1)
+		{
+		Button_Debounce(button_callback);
+
+		switch (option->current)
+			{
+			case MAIN:
+				if(button_up == UP)
+					{
+					if(arbwave_screen == 1)
+						{
+						option->current = ARB_WAVE;
+						}
+
+					else
+						{
+						if(duty_screen == 1)
+							{
+							option->current = DUTY_CYCLE;
+							}
+							else
+							{
+								option->current = FREQUENCY;
+							}
+						}
+					}
+
+				else
+					if(button_down == DOWN)
+						{
+						option->current = WAVEFORMS;
+						TIM8->CNT = 0;
+						}
+
+				break;
+
+			case WAVEFORMS:
+				if(button_up == UP)
+					{ option->current = MAIN; }
+
+				else
+					if(button_down == DOWN)
+						{
+						option->current = FREQUENCY;
+						TIM8->CNT = 0;
+						}
+
+				break;
+
+			case FREQUENCY:
+				if(button_up == UP)
+					{
+					option->current = WAVEFORMS;
+					}
+
+				else
+					if(button_down == DOWN)
+						{
+						if(arbwave_screen == 1)
+							{
+							option->current = ARB_WAVE;
+							}
+
+						else
+							{
+							if(duty_screen == 1)
+								{
+								option->current = DUTY_CYCLE;
+								}
+								else
+								{
+									option->current = MAIN;
+								}
+							}
+						}
+
+				break;
+
+			case DUTY_CYCLE:
+				if(button_up == UP)
+					{ option->current = FREQUENCY; }
+
+				else
+					if(button_down == DOWN)
+						{
+						option->current = MAIN;
+						}
+
+				break;
+
+			case ARB_WAVE:
+				if(button_up == UP)
+					{ option->current = FREQUENCY; }
+
+				else
+					if(button_down == DOWN)
+						{
+						option->current = MAIN;
+						}
+
+				break;
+			}
+
+		flag_callback_menu = 0;
+		button_up = NONE;
+		button_down = NONE;
+		//button_right = NONE;
+		//button_left = NONE;
+		}
+
+	return option->current;
+	}
+
+int Recover_PrevDigitVal(struct selection* param)
+	{
+	switch(param->val.unity_selected)
+		{
+		case UNITY:
+			TIM1->CNT = param->cnt.unity;
+			break;
+
+		case TENS:
+			TIM1->CNT = param->cnt.tens;
+			break;
+
+		case HUNDRED:
+			TIM1->CNT = param->cnt.hundred;
+			break;
+
+		case UNITY_THOUSAND:
+			TIM1->CNT = param->cnt.unity_thousand;
+			break;
+
+		case TENS_THOUSAND:
+			TIM1->CNT = param->cnt.tens_thousand;
+			break;
+		}
+
+	return (TIM1->CNT >> 2);
+	}
+
+void Print_ArrowUp(int row, int pos)
+	{
+	int i;
+
+	for(i = 0; i < 20; i++)
+		{
+		print_shifted(sym.empty_space, row, i);
+		}
+
+	print_shifted(sym.arrow_up, row, pos);
+	}
+
+void Print_ArrowRight(int line, int pos)
+	{
+	int i;
+
+	for(i = 0; i < 4; i++)
+		{
+		print_shifted(sym.empty_space, i, pos);
+		}
+
+	print_shifted(sym.arrow_right, line, pos);
+	}
+
+void Update_CNTValues(struct selection* sel)
+	{
+	sel->cnt.unity = sel->dec.unity * 4;
+	sel->cnt.tens = (sel->dec.tens / 10) * 4;
+	sel->cnt.hundred = (sel->dec.hundred / 100) * 4;
+	sel->cnt.unity_thousand = (sel->dec.unity_thousand / 1000) * 4;
+	sel->cnt.tens_thousand = (sel->dec.tens_thousand / 10000) * 4;
+	}
+
+void Update_SelStruct(struct selection* s, int udv, int uov, int tdv, int tov, int hdv, int hov, int utdv, int utov, int ttdv, int ttov)
+	{
+	char buff[1] = {'0'};
+
+	if(uov == 0)
+		{
+		sprintf(buff, "%d", udv);
+		s->buf.unity[0]	= buff[0];
+		s->dec.unity = udv;
+		}
+
+	else
+		if(uov == 1)
+			{
+			s->dec.unity += 1;
+			s->buf.unity[0] += 1;
+			}
+
+		else
+			if(uov == -1)
+				{
+				s->dec.unity -= 1;
+				s->buf.unity[0] -= 1;
+				}
+
+	if(tov == 0)
+		{
+		sprintf(buff, "%d", tdv);
+		s->buf.tens[0]	= buff[0];
+		s->dec.tens = tdv * 10;
+		}
+
+	else
+		if(tov == 1)
+			{
+			s->dec.tens += 10;
+			s->buf.tens[0] += 1;
+			}
+
+		else
+			if(tov == -1)
+				{
+				s->dec.tens -= 10;
+				s->buf.tens[0] -= 1;
+				}
+
+	if(hov == 0)
+		{
+		sprintf(buff, "%d", hdv);
+		s->buf.hundred[0]	= buff[0];
+		s->dec.hundred = hdv * 100;
+		}
+
+	else
+		if(hov == 1)
+			{
+			s->dec.hundred += 100;
+			s->buf.hundred[0] += 1;
+			}
+
+		else
+			if(hov == -1)
+				{
+				s->dec.hundred -= 100;
+				s->buf.hundred[0] -= 1;
+				}
+
+	if(utov == 0)
+		{
+		sprintf(buff, "%d", utdv);
+		s->buf.unity_thousand[0]	= buff[0];
+		s->dec.unity_thousand = utdv * 1000;
+		}
+
+	else
+		if(utov == 1)
+			{
+			s->dec.unity_thousand += 1000;
+			s->buf.unity_thousand[0] += 1;
+			}
+
+		else
+			if(utov == -1)
+				{
+				s->dec.unity_thousand -= 1000;
+				s->buf.unity_thousand[0] -= 1;
+				}
+
+	if(ttov == 0)
+		{
+		sprintf(buff, "%d", ttdv);
+		s->buf.tens_thousand[0]	= buff[0];
+		s->dec.tens_thousand = ttdv * 10000;
+		}
+
+	else
+		if(ttov == 1)
+			{
+			s->dec.tens_thousand += 10000;
+			s->buf.tens_thousand[0] += 1;
+			}
+
+		else
+			if(ttov == -1)
+				{
+				s->dec.tens_thousand -= 10000;
+				s->buf.tens_thousand[0] -= 1;
+				}
+	}
+
+
+
