@@ -10,7 +10,7 @@
 ### Download
 | Latest release | Latest development build |
 |----------------|--------------------------|
-| [![Noto](https://img.shields.io/badge/master-v1.0-green.svg)](https://github.com/NotoFederico/FuncGen/tree/main) | [![Noto](https://img.shields.io/badge/develop-v1.1+-blue.svg)](Enlace a la version en desarrollo) |
+| [![Noto](https://img.shields.io/badge/master-v1.0-green.svg)](https://github.com/NotoFederico/FuncGen/tree/main) | [![Noto](https://img.shields.io/badge/develop-v2.0+-blue.svg)](https://github.com/NotoFederico/FuncGen/tree/dev) |
 
 ---
 
