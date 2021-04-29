@@ -47,7 +47,7 @@ In the project in question, known signals can be generated: such as sine, semi-d
 
 # 3. Paper Link
 
-[Paper (Spanish)](https://github.com/NotoFederico/STM32/blob/main/FuncGen/FuncGen_STM32DISCO/Informe.pdf)
+[Paper (Spanish)](https://github.com/NotoFederico/FuncGen/blob/main/FuncGen_STM32DISCO/Informe.pdf)
 
 
 ---
