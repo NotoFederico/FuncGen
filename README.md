@@ -3,7 +3,7 @@
 
 ---
 
-![Project.Cover](projectCover.png)
+![Project.Cover]https://notoapps.firebaseapp.com/images/portfolios/funcGen.png)
 
 ---
 
