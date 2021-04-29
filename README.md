@@ -16,10 +16,9 @@
 
 # Contents
 - 1 - [Introduction](#1-introduction)
-- 2 - [Downloading the application](#2-downloading-the-game-pre-built)
-- 3 - [Paper Link](#3-paper-link)
-- 4 - [Contributing](#4-contributing)
-- 5 - [Licence](#5-licence)
+- 2 - [Paper Link](#3-paper-link)
+- 3 - [Contributing](#4-contributing)
+- 4 - [Licence](#5-licence)
 
 ---
 
@@ -41,23 +40,20 @@ In the project in question, known signals can be generated: such as sine, semi-d
 
 ---
 
-# 2. Downloading the application
-
----
-
-# 3. Paper Link
+# 2. Paper Link
 
 [Paper (Spanish)](https://github.com/NotoFederico/FuncGen/blob/main/FuncGen_STM32DISCO/Informe.pdf)
 
 
 ---
 
-# 4. Contributing
+# 3. Contributing
 
 FuncGen uses the [gitflow workflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow). If you are implementing a new feature or logic from the original game, please branch off and perform pull requests to ```develop```. If you are fixing a bug for the next release, please branch off and perform pull requests to the correct release branch. ```master``` only contains tagged releases, you should never branch off this.
 
 ---
-# 5. Licence
+
+# 4. Licence
 
 FuncGen is licensed under the GNU General Public License version 3.
 
