@@ -3,7 +3,7 @@
 
 ---
 
-![Project.Cover](funcGen.png)
+![Project.Cover](funcGen.jpg)
 
 ---
 
